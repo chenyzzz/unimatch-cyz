@@ -1,0 +1,12 @@
+# arguments for dataset
+dataset: acdc
+nclass: 4
+crop_size: 256
+data_root: D:\Cyz\Github\UniMatch-main\ACDC\ACDC
+#data_root: Your/ACDC/Path
+
+# arguments for training
+epochs: 20  #300
+batch_size: 1 # per GPU x 1 GPU  #12
+lr: 0.01
+conf_thresh: 0.95  # 在无标注数据集的损失函数中利用阈值cfg['conf_thresh']过滤掉低置信度像素点。
