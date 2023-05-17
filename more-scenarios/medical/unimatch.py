@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import pathlib
 import pprint
 
 import torch
@@ -32,8 +33,8 @@ parser.add_argument('--port', default=20024, type=int)
 parser.add_argument('--use_TI_loss', action='store_true', help="Use TI loss or not")
 parser.add_argument('--TI_weight', default=1e-6, help="TI loss weight")
 
-parser.add_argument('--log-file', default='exp/acdc-save/unimatch/unet/split-1/1.log', type=str, required=False,
-                    help='Path to the log file')
+parser.add_argument('--log-file', default='1.log', type=str, required=False,
+                    help='Name to the log file')
 
 
 # parser.add_argument('--nproc_per_node', default=1, type=int)
@@ -44,9 +45,12 @@ parser.add_argument('--log-file', default='exp/acdc-save/unimatch/unet/split-1/1
 def main():
     args = parser.parse_args()
 
+    if not os.path.exists(args.save_path):
+        pathlib.Path(args.save_path).mkdir(parents=True, exist_ok=True)
+
     cfg = yaml.load(open(args.config, "r", encoding='utf-8'), Loader=yaml.Loader)
 
-    logger = init_log('global', logging.INFO, args.log_file)
+    logger = init_log('global', logging.INFO, log_path=args.save_path, filename=args.log_file)
     logger.propagate = 0  # 该日志记录器不会将消息传递给父处理程序
 
     # 调用 setup_distributed 函数，设置分布式训练环境，获取当前进程号 rank 和总的进程数 world_size。

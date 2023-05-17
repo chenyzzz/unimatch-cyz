@@ -106,7 +106,7 @@ logs = set()
 #     return logger
 
 # 自己改了 将日志写入filename文件
-def init_log(name, level=logging.INFO, filename=None):
+def init_log(name, level=logging.INFO, log_path=None, filename=None):
     if (name, level) in logs:
         return
     logs.add((name, level))
@@ -126,7 +126,8 @@ def init_log(name, level=logging.INFO, filename=None):
 
     # If filename is given, add a FileHandler to the logger
     if filename is not None:
-        file_handler = logging.FileHandler(filename, mode='a')
+        filepath = os.path.join(log_path, filename)
+        file_handler = logging.FileHandler(filepath, mode='a')
         file_handler.setLevel(level)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
