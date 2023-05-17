@@ -166,7 +166,7 @@ class TI_Loss(nn.Module):
             self.sum_dim_list = [1, 2, 3]
             self.conv_op = torch.nn.functional.conv2d
         elif self.dim == 3:
-            self.sum_dim_list = [1, 2, 3]
+            self.sum_dim_list = [1, 2, 3, 4]
             self.conv_op = torch.nn.functional.conv3d
 
         self.set_kernel()

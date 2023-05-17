@@ -1,7 +1,6 @@
 import argparse
 import logging
 import os
-import pathlib
 import pprint
 
 import torch
@@ -89,7 +88,7 @@ def main():
     criterion_dice = DiceLoss(n_classes=cfg['nclass'])
 
     if args.use_TI_loss:
-        criterion_ti = TI_Loss(dim=3, connectivity=6, inclusion=[[2, 3]], exclusion=[[1, 3], [1, 2]])
+        criterion_ti = TI_Loss(dim=2, connectivity=4, inclusion=[[2, 3]], exclusion=[[1, 3], [1, 2]])
     else:
         criterion_ti = None
 

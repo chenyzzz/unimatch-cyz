@@ -131,3 +131,4 @@ dmypy.json
 *.pth
 *.nii
 *.nii.gz
+*.tfevents.*
