@@ -13,4 +13,8 @@ NP=$SLURM_JOB_GPUS
 CUDA_VISIBLE_DEVICES=$NP python unimatch.py \
     --use_TI_loss \
     --config /public/home/jd_cyz/code/unimatch-cyz/more-scenarios/medical/configs/acdc.yaml \
+<<<<<<< HEAD
     --save_path /public/home/jd_cyz/code/unimatch-cyz/more-scenarios/medical/output/exp/0517
+=======
+    --save-path /public/home/jd_cyz/code/unimatch-cyz/more-scenarios/medical/output/exp
+>>>>>>> 594110686621152920ef76a527c16dad7b933e6c
