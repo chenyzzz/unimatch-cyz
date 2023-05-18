@@ -112,7 +112,7 @@ def main():
     # trainsampler_u_mix = torch.utils.data.distributed.DistributedSampler(trainset_u)
     trainloader_u_mix = DataLoader(trainset_u, batch_size=cfg['batch_size'],
                                    pin_memory=True, num_workers=1,
-                                   drop_last=True)  # sampler=trainsampler_u_mix)  有标注和无标注混合的数据集加载器
+                                   drop_last=True)  # sampler=trainsampler_u_mix)  mixmatch处理过的
     # valsampler = torch.utils.data.distributed.DistributedSampler(valset)
     valloader = DataLoader(valset, batch_size=1, pin_memory=True, num_workers=1,
                            drop_last=False)  # sampler=valsampler)
@@ -306,7 +306,7 @@ def main():
             }
             torch.save(checkpoint, os.path.join(args.save_path, 'latest.pth'))
             if is_best:
-                torch.save(checkpoint, os.path.join(args.save_path, 'best.pth'))
+                torch.save(checkpoint, os.path.join(args.save_path, f'best_{round(mean_dice, 3)}.pth'))
 
 
 if __name__ == '__main__':
