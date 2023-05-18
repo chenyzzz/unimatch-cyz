@@ -106,7 +106,7 @@ logs = set()
 #     return logger
 
 # 自己改了 将日志写入filename文件
-def init_log(name, level=logging.INFO, filename=None):
+def init_log(name, level=logging.INFO, log_path=None, filename=None):
     if (name, level) in logs:
         return
     logs.add((name, level))
@@ -126,7 +126,8 @@ def init_log(name, level=logging.INFO, filename=None):
 
     # If filename is given, add a FileHandler to the logger
     if filename is not None:
-        file_handler = logging.FileHandler(filename, mode='a')
+        filepath = os.path.join(log_path, filename)
+        file_handler = logging.FileHandler(filepath, mode='a')
         file_handler.setLevel(level)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
@@ -236,9 +237,9 @@ class TI_Loss(nn.Module):
             # Get Neighbourhood Information
             # padding='same' needs pytorch >= 1.9, it means the output shape keep the same with input.
             # When kernel size is 3, padding=1 got the same perform.
-            neighbourhood_C = self.conv_op(mask_C, self.kernel.double(), padding='same')
+            neighbourhood_C = self.conv_op(mask_C, self.kernel.double(), padding=1)
             neighbourhood_C = torch.where(neighbourhood_C >= 1.0, 1.0, 0.0)
-            neighbourhood_A = self.conv_op(mask_A, self.kernel.double(), padding='same')
+            neighbourhood_A = self.conv_op(mask_A, self.kernel.double(), padding=1)
             neighbourhood_A = torch.where(neighbourhood_A >= 1.0, 1.0, 0.0)
 
             # Get the pixels which induce errors
