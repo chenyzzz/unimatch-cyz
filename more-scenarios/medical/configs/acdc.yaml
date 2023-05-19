@@ -6,9 +6,8 @@ data_root: /public/home/jd_cyz/code/Unimatch/dataset/ACDC
 #data_root: Your/ACDC/Path
 
 # arguments for training
-epochs: 600  #300
+epochs: 300  #300
 batch_size: 12 # per GPU x 1 GPU  #12
-# lr: 0.01
-lr: 0.0005
+lr: 0.01
 conf_thresh: 0.95
 

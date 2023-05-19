@@ -132,3 +132,4 @@ dmypy.json
 *.nii
 *.nii.gz
 *.tfevents.*
+*.txt

@@ -30,9 +30,9 @@ parser.add_argument('--local_rank', default=0, type=int)
 parser.add_argument('--port', default=20024, type=int)
 
 parser.add_argument('--use_TI_loss', action='store_true', help="Use TI loss or not")
-parser.add_argument('--TI_weight', default=1e-6, help="TI loss weight")
+parser.add_argument('--TI_weight', default=1e-6, help="TI loss weight", type=float)
 
-parser.add_argument('--log_file', default='2.log', type=str, required=False,
+parser.add_argument('--log_file', default='1.log', type=str, required=False,
                     help='Name to the log file')
 
 
@@ -209,17 +209,17 @@ def main():
             # ignore=(conf_u_w_cutmixed1 < cfg['conf_thresh']).float()
             mask_u_w_cutmixed1[conf_u_w_cutmixed1 < cfg['conf_thresh']] = 0
             loss_u_s1 = criterion_dice(pred_u_s1.softmax(dim=1), mask_u_w_cutmixed1.unsqueeze(1).float()) \
-                        + criterion_ti(pred_u_s1.softmax(dim=1), mask_u_w_cutmixed1.unsqueeze(1)) * args.TI_weight
+                        + criterion_ti(pred_u_s1, mask_u_w_cutmixed1.unsqueeze(1)) * args.TI_weight
             loss_u_s1 /= 2.0 if args.use_TI_loss else 1.0
 
             mask_u_w_cutmixed2[conf_u_w_cutmixed2 < cfg['conf_thresh']] = 0
             loss_u_s2 = criterion_dice(pred_u_s2.softmax(dim=1), mask_u_w_cutmixed2.unsqueeze(1).float()) \
-                        + criterion_ti(pred_u_s2.softmax(dim=1), mask_u_w_cutmixed2.unsqueeze(1)) * args.TI_weight
+                        + criterion_ti(pred_u_s2, mask_u_w_cutmixed2.unsqueeze(1)) * args.TI_weight
             loss_u_s2 /= 2.0 if args.use_TI_loss else 1.0
 
             mask_u_w[conf_u_w < cfg['conf_thresh']] = 0
             loss_u_w_fp = criterion_dice(pred_u_w_fp.softmax(dim=1), mask_u_w.unsqueeze(1).float()) \
-                          + criterion_ti(pred_u_w_fp.softmax(dim=1), mask_u_w.unsqueeze(1)) * args.TI_weight
+                          + criterion_ti(pred_u_w_fp, mask_u_w.unsqueeze(1)) * args.TI_weight
             loss_u_w_fp /= 2.0 if args.use_TI_loss else 1.0
 
             loss = (loss_x + loss_u_s1 * 0.25 + loss_u_s2 * 0.25 + loss_u_w_fp * 0.5) / 2.0  # 计算总体损失函数loss,除以2.0来归一化
