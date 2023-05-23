@@ -23,8 +23,8 @@ parser = argparse.ArgumentParser(
     description='Revisiting Weak-to-Strong Consistency in Semi-Supervised Semantic Segmentation')
 parser.add_argument('--config', default='D:/Cyz/Github/UniMatch-main/UniMatch-main/more-scenarios/medical/configs/acdc.yaml',
                     type=str, required=False)
-parser.add_argument('--labeled-id-path', default='splits/acdc/1/labeled.txt', type=str, required=False)
-parser.add_argument('--unlabeled-id-path', default='splits/acdc/1/unlabeled.txt', type=str, required=False)
+parser.add_argument('--labeled-id-path', default='splits/acdc/7/labeled.txt', type=str, required=False)
+parser.add_argument('--unlabeled-id-path', default='splits/acdc/7/unlabeled.txt', type=str, required=False)
 parser.add_argument('--save_path', default='exp/acdc-save/unimatch/unet/split-1', type=str, required=False)
 parser.add_argument('--local_rank', default=0, type=int)
 parser.add_argument('--port', default=20024, type=int)
@@ -207,20 +207,30 @@ def main():
 
             # 无标注部分采用Dice Loss的平均值.利用阈值cfg['conf_thresh']过滤掉低置信度像素点
             # ignore=(conf_u_w_cutmixed1 < cfg['conf_thresh']).float()
-            mask_u_w_cutmixed1[conf_u_w_cutmixed1 < cfg['conf_thresh']] = 0
-            loss_u_s1 = criterion_dice(pred_u_s1.softmax(dim=1), mask_u_w_cutmixed1.unsqueeze(1).float()) \
-                        + criterion_ti(pred_u_s1, mask_u_w_cutmixed1.unsqueeze(1)) * args.TI_weight
-            loss_u_s1 /= 2.0 if args.use_TI_loss else 1.0
+            # mask_u_w_cutmixed1[conf_u_w_cutmixed1 < cfg['conf_thresh']] = 0
+            # loss_u_s1 = criterion_dice(pred_u_s1.softmax(dim=1), mask_u_w_cutmixed1.unsqueeze(1).float()) \
+            #             + criterion_ti(pred_u_s1, mask_u_w_cutmixed1.unsqueeze(1)) * args.TI_weight
+            # loss_u_s1 /= 2.0 if args.use_TI_loss else 1.0
 
-            mask_u_w_cutmixed2[conf_u_w_cutmixed2 < cfg['conf_thresh']] = 0
-            loss_u_s2 = criterion_dice(pred_u_s2.softmax(dim=1), mask_u_w_cutmixed2.unsqueeze(1).float()) \
-                        + criterion_ti(pred_u_s2, mask_u_w_cutmixed2.unsqueeze(1)) * args.TI_weight
-            loss_u_s2 /= 2.0 if args.use_TI_loss else 1.0
+            # mask_u_w_cutmixed2[conf_u_w_cutmixed2 < cfg['conf_thresh']] = 0
+            # loss_u_s2 = criterion_dice(pred_u_s2.softmax(dim=1), mask_u_w_cutmixed2.unsqueeze(1).float()) \
+            #             + criterion_ti(pred_u_s2, mask_u_w_cutmixed2.unsqueeze(1)) * args.TI_weight
+            # loss_u_s2 /= 2.0 if args.use_TI_loss else 1.0
 
-            mask_u_w[conf_u_w < cfg['conf_thresh']] = 0
-            loss_u_w_fp = criterion_dice(pred_u_w_fp.softmax(dim=1), mask_u_w.unsqueeze(1).float()) \
-                          + criterion_ti(pred_u_w_fp, mask_u_w.unsqueeze(1)) * args.TI_weight
-            loss_u_w_fp /= 2.0 if args.use_TI_loss else 1.0
+            # mask_u_w[conf_u_w < cfg['conf_thresh']] = 0
+            # loss_u_w_fp = criterion_dice(pred_u_w_fp.softmax(dim=1), mask_u_w.unsqueeze(1).float()) \
+            #               + criterion_ti(pred_u_w_fp, mask_u_w.unsqueeze(1)) * args.TI_weight
+            # loss_u_w_fp /= 2.0 if args.use_TI_loss else 1.0
+
+            loss_u_s1 = criterion_dice(pred_u_s1.softmax(dim=1), mask_u_w_cutmixed1.unsqueeze(1).float(),
+                                       ignore=(conf_u_w_cutmixed1 < cfg['conf_thresh']).float())
+            
+            loss_u_s2 = criterion_dice(pred_u_s2.softmax(dim=1), mask_u_w_cutmixed2.unsqueeze(1).float(),
+                                       ignore=(conf_u_w_cutmixed2 < cfg['conf_thresh']).float())
+            
+            loss_u_w_fp = criterion_dice(pred_u_w_fp.softmax(dim=1), mask_u_w.unsqueeze(1).float(),
+                                         ignore=(conf_u_w < cfg['conf_thresh']).float())
+            
 
             loss = (loss_x + loss_u_s1 * 0.25 + loss_u_s2 * 0.25 + loss_u_w_fp * 0.5) / 2.0  # 计算总体损失函数loss,除以2.0来归一化
 
